@@ -3,11 +3,11 @@ tornado在线代理谷歌
 __配置文件__
 --------
 > [proxy]
-host = www.google.com.sg # 我的服务器新加坡，所以我代理的是sg。
-port = 443                                                                                           
-protocol = https
-js = js.js   # 指定js的文件，文件内容会被添加到html内容的最后面，可以用来修改页面元素
-cookies = PREF=ID=047808f19f6de346:U=0f62f33dd8549d11:FF=2:LD=zh-CN:NW=1:TM=1325338577:LM=1332142444:GM=1:SG=2:S=rE0SyJh2w1IQ-Maw # 设置cookies，这里的cookie表示语言是zh-cn，在新窗口中打开。
+>  host = www.google.com.sg # 我的服务器新加坡，所以我代理的是sg。
+>  port = 443                                                                                           
+>  protocol = https
+>  js = js.js   # 指定js的文件，文件内容会被添加到html内容的最后面，可以用来修改页面元素
+>  cookies = PREF=ID=047808f19f6de346:U=0f62f33dd8549d11:FF=2:LD=zh-CN:NW=1:TM=1325338577:LM=1332142444:GM=1:SG=2:S=rE0SyJh2w1IQ-Maw # 设置cookies，这里的cookie表示语言是zh-cn，在新窗口中打开。
 
 __运行代理__
 > python run.py
