@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-01-14 13:24:37
+# Last modified   : 2015-01-14 14:15:32
 # Filename        : proxy/core.py
 # Description     : 
 from tornado import web, httpclient
@@ -44,8 +44,12 @@ class ProxyHandler(web.RequestHandler):
         self.set_header('Set-Cookie', cfg.get('proxy', 'cookies'))
 
         if response.body:
-            process = Process(response.body, self.request)
-            body = process.process()
+            # 只对html 进行内容替换
+            if 'html' in self.request.headers['Accept']:
+                process = Process(response.body, self.request)
+                body = process.process()
+            else:
+                body = response.body
             self.write(body)
 
         self.finish()
@@ -53,8 +57,6 @@ class ProxyHandler(web.RequestHandler):
 
     @web.asynchronous
     def get(self):
-        self.render('index.html')
-        return
         request = self.get_request()
         try:
             httpclient.AsyncHTTPClient().fetch(request,
