@@ -19,25 +19,46 @@ __运行代理__
 __用nginx来反向代理它__
 > 
 upstream proxy_google{                                                                                                                  
+
     server 127.0.0.1:1111;
+    
 }
+
 server {
+
     listen 80; 
+    
     server_name g.tuxpy.info;
+    
     rewrite ^(.*)$ https://g.tuxpy.info$1 permanent;
+    
 }
+
 server{
+
     listen 443;
+    
     server_name g.tuxpy.info;
+    
     ssl on; 
+    
     ssl_certificate /home/www/1_g.tuxpy.info_bundle.crt;
+    
     ssl_certificate_key /home/www/2_g.tuxpy.info.key;
+    
     location /{
         proxy_pass_header Server;
+        
         proxy_set_header Host \$http_host;
+        
         proxy_redirect off;
+        
         proxy_set_header X-Real-IP \$remote_addr;
+        
         proxy_set_header X-Scheme \$scheme;
+        
         proxy_pass http://proxy_google;
+        
         }   
+        
 }
