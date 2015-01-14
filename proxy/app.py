@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-01-14 13:52:36
+# Last modified   : 2015-01-14 16:49:35
 # Filename        : proxy/app.py
 # Description     : 
 from tornado import web
@@ -16,7 +16,6 @@ class ProxyApplication(web.Application):
                 (r'/.*', ProxyHandler),
                 ]
         settings = {
-                'debug':True,
                 }
         web.Application.__init__(self, handlers, **settings)
 

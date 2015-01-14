@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-01-14 16:44:17
+# Last modified   : 2015-01-14 17:38:10
 # Filename        : proxy/core.py
 # Description     : 
 try:
@@ -16,6 +16,7 @@ from proxy.config import config
 from proxy.process import Process
 
 cfg = config()
+
 
 class ProxyHandler(web.RequestHandler):
     # 接收客户端的request，并把handler修改好,返回一个HTTPRequest
