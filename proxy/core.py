@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-01-13 16:57:12
+# Last modified   : 2015-01-14 13:24:37
 # Filename        : proxy/core.py
 # Description     : 
 from tornado import web, httpclient
@@ -19,12 +19,10 @@ class ProxyHandler(web.RequestHandler):
         port = cfg.get('proxy', 'port')
         protocol = cfg.get('proxy', 'protocol')
         uri = self.request.uri
-
         url = "{protocol}://{host}:{port}{uri}".format(protocol = protocol,
                 host = host, port = port, uri = uri)
         headers = dict(self.request.headers)
-        headers['host'] = host
-
+        headers['Host'] = host
         return httpclient.HTTPRequest(
                 url = url, 
                 method = self.request.method,
@@ -39,10 +37,12 @@ class ProxyHandler(web.RequestHandler):
             self.finish()
             return
         self.set_status(response.code)
-        for header in ('Set-Cookie', 'Date', 'Cache-Control', 'Server', 'Content-Type', 'Location'):
+        for header in ('Date', 'Cache-Control', 'Server', 'Content-Type', 'Location'):
             v = response.headers.get(header)
             if v:
                 self.set_header(header, v)
+        self.set_header('Set-Cookie', cfg.get('proxy', 'cookies'))
+
         if response.body:
             process = Process(response.body, self.request)
             body = process.process()
@@ -50,15 +50,11 @@ class ProxyHandler(web.RequestHandler):
 
         self.finish()
 
-    def process_body(self, body):
-        import re
-        host = cfg.get('proxy', 'host')
-        body = re.sub(r'//({host})/'.format(host = host), body)
-        return body
-
 
     @web.asynchronous
     def get(self):
+        self.render('index.html')
+        return
         request = self.get_request()
         try:
             httpclient.AsyncHTTPClient().fetch(request,
