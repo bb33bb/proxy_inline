@@ -62,3 +62,6 @@ server{
         }   
         
 }
+
+__演示地址__
+https://g.tuxpy.info
