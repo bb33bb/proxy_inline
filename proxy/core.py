@@ -2,9 +2,14 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-01-14 14:15:32
+# Last modified   : 2015-01-14 16:44:17
 # Filename        : proxy/core.py
 # Description     : 
+try:
+    from tornado.curl_httpclient import AsyncHTTPClient
+except ImportError:
+    from tornado.simple_httpclient import AsyncHTTPClient
+
 from tornado import web, httpclient
 from tornado.web import HTTPError
 from proxy.config import config
