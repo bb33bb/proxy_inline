@@ -2,7 +2,7 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-01-14 17:38:10
+# Last modified   : 2015-01-15 19:25:44
 # Filename        : proxy/core.py
 # Description     : 
 try:
@@ -12,13 +12,28 @@ except ImportError:
 
 from tornado import web, httpclient
 from tornado.web import HTTPError
+import os
 from proxy.config import config
+from proxy.mail import Mail
 from proxy.process import Process
 
 cfg = config()
 
 
 class ProxyHandler(web.RequestHandler):
+    # 当服务器发生错误的时候，发送邮箱给我的email
+    def write_error(self, status_code, **kwargs):
+        self.set_status(status_code)
+        mail_txt = "错误代码:{status_code}\n请求头:\n{headers}\n异常情况:\n{exc_info}".format(
+                status_code = status_code, 
+                headers = '\n'.join([': '.join(item) for item in self.request.headers.items()]),
+                exc_info = str(kwargs.get('exc_info', ''))
+                )
+        self.render('error.html', status_code = str(status_code))
+        mail = Mail(mail_txt)
+        if self.request.headers['Host'].strip() == cfg.get('proxy', 'host'):
+            mail.send()
+
     # 接收客户端的request，并把handler修改好,返回一个HTTPRequest
     def get_request(self):
         host = cfg.get('proxy', 'host')
@@ -47,11 +62,14 @@ class ProxyHandler(web.RequestHandler):
             v = response.headers.get(header)
             if v:
                 self.set_header(header, v)
+        # 把cookie让用户知道
         self.set_header('Set-Cookie', cfg.get('proxy', 'cookies'))
+        # 把服务器改成我的。。纯粹为了打广告
+        self.set_header('Server', 'tuxpy-tornado_%s' % os.getpid())
 
         if response.body:
-            # 只对html 进行内容替换
-            if 'html' in self.request.headers['Accept']:
+            # 只对html 进行内容替换, 通过判断response的Content-Type来决定
+            if 'html' in response.headers['Content-Type']:
                 process = Process(response.body, self.request)
                 body = process.process()
             else:
@@ -59,7 +77,6 @@ class ProxyHandler(web.RequestHandler):
             self.write(body)
 
         self.finish()
-
 
     @web.asynchronous
     def get(self):

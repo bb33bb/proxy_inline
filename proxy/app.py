@@ -2,13 +2,12 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-01-14 16:49:35
+# Last modified   : 2015-01-15 19:20:07
 # Filename        : proxy/app.py
 # Description     : 
 from tornado import web
 from os import path
 from proxy.core import ProxyHandler
-from proxy.module import ProxyModule
 
 class ProxyApplication(web.Application):
     def __init__(self):
@@ -16,6 +15,7 @@ class ProxyApplication(web.Application):
                 (r'/.*', ProxyHandler),
                 ]
         settings = {
+                'template_path': path.join(path.dirname(__file__), 'templates'),
                 }
         web.Application.__init__(self, handlers, **settings)
 

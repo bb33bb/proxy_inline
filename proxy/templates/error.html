@@ -1,0 +1,30 @@
+<html>
+    <head>
+        <meta http-equiv=Content-Type content="text/html;charset=utf-8" />
+        <title>出错了</title>
+        <style>
+            body{
+                font-family:arial,helvetica,sans-serif;
+                word-wrap:break-word;
+                word-break:normal;
+            }
+            #code_5{
+                width:600px;
+                margin:100px auto;
+                line-height:200%;
+                color:#fff;
+                background-color:#000;
+                font-weight:bold;
+                font-size:20px;
+                padding:30px;
+            }
+
+        </style>
+    </head>
+    <body>
+        {% if status_code.startswith('5') %}
+        <div id="code_5">服务器暂时出了点错，错误已经通知作者了，如果你有什么疑问，请Emailto q8886888@qq.com</div>
+        {% end %}
+        
+    </body>
+</html>
