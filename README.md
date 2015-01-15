@@ -2,7 +2,18 @@ tornado在线代理谷歌
 ==============
 __配置文件__
 --------
+>[mail]
+
+>  host = xxx # smtp主机地址
+
+>  username = xxx # 邮箱用户名
+
+>  password = xxx # 邮箱密码
+
+>  admin =  xxx # 管理员email，出错的时候，会把错误信息报给它
+
 > [proxy]
+
 >  host = www.google.com.sg # 我的服务器新加坡，所以我代理的是sg。
 
 >  port = 443                         
