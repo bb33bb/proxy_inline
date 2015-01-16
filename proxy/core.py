@@ -2,13 +2,14 @@
 #coding:utf8
 # Author          : tuxpy
 # Email           : q8886888@qq.com
-# Last modified   : 2015-01-15 19:25:44
+# Last modified   : 2015-01-16 19:45:10
 # Filename        : proxy/core.py
 # Description     : 
 try:
     from tornado.curl_httpclient import AsyncHTTPClient
 except ImportError:
     from tornado.simple_httpclient import AsyncHTTPClient
+
 
 from tornado import web, httpclient
 from tornado.web import HTTPError
@@ -17,11 +18,27 @@ from proxy.config import config
 from proxy.mail import Mail
 from proxy.process import Process
 
+# 下面三个来将tornado从阻塞变成非阻塞的
+from tornado.concurrent import run_on_executor
+from tornado import gen
+from concurrent.futures import ThreadPoolExecutor
+
+
 cfg = config()
 
 
+
 class ProxyHandler(web.RequestHandler):
+    executor = ThreadPoolExecutor(10)
+
+    @run_on_executor
+    def _send_mail(self, mail_txt):
+        mail = Mail(mail_txt)
+        mail.send()
+
+
     # 当服务器发生错误的时候，发送邮箱给我的email
+    @gen.coroutine
     def write_error(self, status_code, **kwargs):
         self.set_status(status_code)
         mail_txt = "错误代码:{status_code}\n请求头:\n{headers}\n异常情况:\n{exc_info}".format(
@@ -30,9 +47,8 @@ class ProxyHandler(web.RequestHandler):
                 exc_info = str(kwargs.get('exc_info', ''))
                 )
         self.render('error.html', status_code = str(status_code))
-        mail = Mail(mail_txt)
-        if self.request.headers['Host'].strip() == cfg.get('proxy', 'host'):
-            mail.send()
+        if 'Googlebot' not in self.request.headers['User-Agent']:
+            self._send_mail(mail_txt)
 
     # 接收客户端的request，并把handler修改好,返回一个HTTPRequest
     def get_request(self):
